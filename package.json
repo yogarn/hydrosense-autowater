@@ -1,0 +1,27 @@
+{
+  "name": "hydrosense-autowater",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yogarn/hydrosense-autowater.git"
+  },
+  "author": "Yoga Raditya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yogarn/hydrosense-autowater/issues"
+  },
+  "homepage": "https://github.com/yogarn/hydrosense-autowater#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "pg": "^8.11.5",
+    "socket.io": "^4.7.5"
+  }
+}

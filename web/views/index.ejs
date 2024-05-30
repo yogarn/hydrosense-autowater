@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Moisture Sensor Data</title>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <h1>Moisture Sensor Data</h1>
+    <ul id="dataList"></ul>
+
+    <script>
+      const socket = io();
+      const dataList = document.getElementById("dataList");
+
+      const fetchLatestData = () => {
+        fetch("/moisture")
+          .then((response) => response.json())
+          .then((data) => {
+            dataList.innerHTML = "";
+            data.forEach((item) => {
+              const li = document.createElement("li");
+              li.textContent = `Moisture: ${item.moisture}, Time: ${new Date(
+                item.timestamp
+              ).toLocaleString()}`;
+              dataList.appendChild(li);
+            });
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+      };
+
+      document.addEventListener("DOMContentLoaded", fetchLatestData);
+
+      socket.on("data", (data) => {
+        const li = document.createElement("li");
+        li.textContent = `Moisture: ${data.moisture}, Time: ${new Date(
+          data.timestamp
+        ).toLocaleString()}`;
+        dataList.appendChild(li);
+      });
+    </script>
+  </body>
+</html>
