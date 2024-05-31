@@ -4,17 +4,21 @@
     <title>Moisture Sensor Data</title>
     <link rel="stylesheet" type="text/css" href="/css/styles.css" />
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.33.0.min.js" charset="utf-8"></script>
   </head>
   <body>
     <h1>Moisture Sensor Data</h1>
-    <ul id="dataList"></ul>
+    <div id="gd"></div>
 
+    <ul id="dataList"></ul>
     <script>
       const socket = io();
       const dataList = document.getElementById("dataList");
+      const moistureArray = [];
+      const timeArray = [];
 
       const fetchLatestData = () => {
-        fetch("/moisture")
+        return fetch("/moisture")
           .then((response) => response.json())
           .then((data) => {
             dataList.innerHTML = "";
@@ -24,9 +28,39 @@
                 item.timestamp
               ).toLocaleString()}`;
               dataList.appendChild(li);
+              
+              moistureArray.push(item.moisture);
+              timeArray.push(new Date(item.timestamp).toLocaleString());
             });
+            plotData();
           })
           .catch((error) => console.error("Error fetching data:", error));
+      };
+
+      const plotData = () => {
+        Plotly.newPlot(
+          "gd",
+          [
+            {
+              x: timeArray,
+              y: moistureArray,
+              type: "scatter",
+              mode: "lines+markers",
+              marker: { color: "blue" },
+            },
+          ],
+          {
+            width: 600,
+            height: 400,
+            title: "Moisture Data Over Time",
+            xaxis: {
+              title: "Time",
+            },
+            yaxis: {
+              title: "Moisture",
+            },
+          }
+        );
       };
 
       document.addEventListener("DOMContentLoaded", fetchLatestData);
@@ -37,6 +71,14 @@
           data.timestamp
         ).toLocaleString()}`;
         dataList.appendChild(li);
+
+        moistureArray.push(data.moisture);
+        timeArray.push(new Date(data.timestamp).toLocaleString());
+
+        Plotly.extendTraces("gd", {
+          x: [[new Date(data.timestamp).toLocaleString()]],
+          y: [[data.moisture]],
+        }, [0]);
       });
     </script>
   </body>
