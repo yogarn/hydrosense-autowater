@@ -66,6 +66,7 @@
       document.addEventListener("DOMContentLoaded", fetchLatestData);
 
       socket.on("data", (data) => {
+        console.log(`data received: ${data.moisture}`)
         const li = document.createElement("li");
         li.textContent = `Moisture: ${data.moisture}, Time: ${new Date(
           data.timestamp
@@ -79,6 +80,32 @@
           x: [[new Date(data.timestamp).toLocaleString()]],
           y: [[data.moisture]],
         }, [0]);
+
+        const rangeSize = 10;
+        const start = Math.max(timeArray.length - rangeSize, 0);
+        const end = timeArray.length;
+        
+        Plotly.relayout('gd', {
+          'xaxis.range': [timeArray[start], timeArray[end - 1]]
+        }).then(() => {
+          Plotly.react("gd", [{
+            x: timeArray.slice(start, end),
+            y: moistureArray.slice(start, end),
+            type: "scatter",
+            mode: "lines+markers",
+            marker: { color: "blue" },
+          }], {
+            width: 600,
+            height: 400,
+            title: "Moisture Data Over Time",
+            xaxis: {
+              title: "Time",
+            },
+            yaxis: {
+              title: "Moisture",
+            },
+          });
+        });
       });
     </script>
   </body>
